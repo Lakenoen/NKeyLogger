@@ -1,0 +1,225 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerlib\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|solutionrelative:nkeyloggerlib\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26C695E0-AE88-4454-B356-B1C2B27F57A9}|NKeyLoggerServer\\NKeyLoggerServer.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerserver\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26C695E0-AE88-4454-B356-B1C2B27F57A9}|NKeyLoggerServer\\NKeyLoggerServer.csproj|solutionrelative:nkeyloggerserver\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26C695E0-AE88-4454-B356-B1C2B27F57A9}|NKeyLoggerServer\\NKeyLoggerServer.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerserver\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26C695E0-AE88-4454-B356-B1C2B27F57A9}|NKeyLoggerServer\\NKeyLoggerServer.csproj|solutionrelative:nkeyloggerserver\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\nkeyloggerclient.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\nkeyloggerclient.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerlib\\keyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|solutionrelative:nkeyloggerlib\\keyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerlib\\abstractkeyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|solutionrelative:nkeyloggerlib\\abstractkeyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\nativekeylistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\nativekeylistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\networkclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\networkclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\keylistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\keylistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerclient\\isender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8C2BE005-C54F-4F93-9769-EE1B9FCC0C73}|NKeyLoggerClient\\NKeyLoggerClient.csproj|solutionrelative:nkeyloggerclient\\isender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|d:\\code\\projects\\nkeylogger\\nkeylogger\\nkeyloggerlib\\ref.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A427409-7106-437E-9B90-E926C9C9364E}|NKeyLoggerLib\\NKeyLoggerLib.csproj|solutionrelative:nkeyloggerlib\\ref.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 12,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "KeyListener.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\KeyListener.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\KeyListener.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\KeyListener.cs",
+              "RelativeToolTip": "NKeyLoggerClient\\KeyListener.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowA4AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T23:33:59.905Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "KeyInfo.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\KeyInfo.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerLib\\KeyInfo.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\KeyInfo.cs",
+              "RelativeToolTip": "NKeyLoggerLib\\KeyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T17:11:53.224Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "NKeyLoggerClient.csproj",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NKeyLoggerClient.csproj",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\NKeyLoggerClient.csproj",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NKeyLoggerClient.csproj",
+              "RelativeToolTip": "NKeyLoggerClient\\NKeyLoggerClient.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-03T18:30:28.865Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "NativeKeyListener.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NativeKeyListener.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\NativeKeyListener.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NativeKeyListener.cs",
+              "RelativeToolTip": "NKeyLoggerClient\\NativeKeyListener.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAIAwwEYAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-03T10:17:10.788Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\Program.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\Program.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\Program.cs",
+              "RelativeToolTip": "NKeyLoggerClient\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-03T10:16:45.635Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AbstractKeyInfo.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\AbstractKeyInfo.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerLib\\AbstractKeyInfo.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\AbstractKeyInfo.cs",
+              "RelativeToolTip": "NKeyLoggerLib\\AbstractKeyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:46:01.98Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Server.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerServer\\Server.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerServer\\Server.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerServer\\Server.cs",
+              "RelativeToolTip": "NKeyLoggerServer\\Server.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFsAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T14:38:23.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerServer\\Program.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerServer\\Program.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerServer\\Program.cs",
+              "RelativeToolTip": "NKeyLoggerServer\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T14:37:32.898Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "NetworkClient.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NetworkClient.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\NetworkClient.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\NetworkClient.cs",
+              "RelativeToolTip": "NKeyLoggerClient\\NetworkClient.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAIA3wEQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T00:55:42.036Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Network.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\Network.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerLib\\Network.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\Network.cs",
+              "RelativeToolTip": "NKeyLoggerLib\\Network.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAIAwwEoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T14:10:03.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ISender.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\ISender.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerClient\\ISender.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerClient\\ISender.cs",
+              "RelativeToolTip": "NKeyLoggerClient\\ISender.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T23:55:03.055Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Ref.cs",
+              "DocumentMoniker": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\Ref.cs",
+              "RelativeDocumentMoniker": "NKeyLoggerLib\\Ref.cs",
+              "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\NKeyLoggerLib\\Ref.cs",
+              "RelativeToolTip": "NKeyLoggerLib\\Ref.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T00:19:34.926Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
