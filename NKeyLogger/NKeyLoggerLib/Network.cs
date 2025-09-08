@@ -29,7 +29,7 @@ public class Network : IDisposable
         Dispose();
     }
 
-    private async Task<List<byte>> read(long total)
+    private async Task<List<byte>> readAsync(long total)
     {
         if (socket == null)
             throw new ArgumentNullException("Socket is null");
@@ -47,7 +47,7 @@ public class Network : IDisposable
         return result;
     }
 
-    public async Task send(byte[] data, Type type)
+    public async Task sendAsync(byte[] data, Type type)
     {
         if (socket == null)
             throw new ArgumentNullException("Socket is null");
@@ -60,13 +60,13 @@ public class Network : IDisposable
         writer.Flush();
         await socket.SendAsync(stream.ToArray());
     }
-    public async Task<(List<byte>data, Type type)> recv()
+    public async Task<(List<byte>data, Type type)> recvAsync()
     {
-        List<byte> byteSize = await read(sizeof(int));
-        List<byte> byteType = await read(sizeof(short));
+        List<byte> byteSize = await readAsync(sizeof(int));
+        List<byte> byteType = await readAsync(sizeof(short));
         Type type = (Type)BitConverter.ToInt16(byteType.ToArray());
         int size = BitConverter.ToInt32( byteSize.ToArray() );
-        List<byte> data = await read(size);
+        List<byte> data = await readAsync(size);
         return (data, type);
     }
     public void Dispose()
