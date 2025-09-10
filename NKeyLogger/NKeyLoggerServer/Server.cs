@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NKeyLoggerLib;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static NKeyLoggerServer.Server;
@@ -41,6 +42,8 @@ internal class Server : IDisposable
         if (cryptoKeySize <= 0x400)
             throw new ApplicationException("Error parse settings: crypto key size should be more 1024");
         int clearConnectionelipse = int.Parse(setting.Properties["clearconnectionelipse"]);
+        Log<Server>.Instance.logger?.LogDebug($"Load settings into server:\n size of cryptokey - {cryptoKeySize}\n" +
+                $"port - {port}\n clear connection delay - {clearConnectionelipse}\n");
     }
 
     private void changeFileSetting(AbstractSetting setting)
@@ -57,6 +60,7 @@ internal class Server : IDisposable
         init();
         var newTask = start();
         updateTask?.Invoke(newTask);
+        Log<Server>.Instance.logger?.LogDebug("Reload server");
     }
     private void init()
     {
@@ -82,6 +86,7 @@ internal class Server : IDisposable
                 }
             });
         checkClearConnectionTimer.Start();
+        Log<Server>.Instance.logger?.LogDebug("Init server");
     }
     public async Task start()
     {
@@ -93,26 +98,32 @@ internal class Server : IDisposable
         while (isStart)
         {
             var socket = await network.socket.AcceptAsync(cancalableSource.Token);
+            Log<Server>.Instance.logger?.LogDebug($"Connect client: {IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint!).Address.ToString())}");
             Network clientNet = new Network(socket);
             var connectionTask = Task.Factory.StartNew( async () => {
                 try
                 {
                     await clientNet.sendAsync(rsa.ExportRSAPublicKey(), Network.Type.CRYPTOKEY);
                     await read(clientNet);
-                } catch (SocketException)
+                } catch (SocketException e)
                 {
-                    //TODO
-                }catch (Exception)
+                    Log<Server>.Instance.logger?.LogError($"Address: {IPAddress.Parse( ((IPEndPoint)clientNet.socket.RemoteEndPoint!).Address.ToString() )}" +
+                        $"Error: {e.Message}");
+                }
+                catch (Exception e)
                 {
-                    //TODO
+                    Log<Server>.Instance.logger?.LogError($"Address: {IPAddress.Parse(((IPEndPoint)clientNet.socket.RemoteEndPoint!).Address.ToString())}" +
+                        $"Error: {e.Message}");
                 }
             });
             connections[clientNet] = connectionTask;
         }
+        Log<Server>.Instance.logger?.LogDebug("Start server");
     }
 
     public void stop()
     {
+        Log<Server>.Instance.logger?.LogDebug("Stop server");
         isStart = false;
         foreach (var item in connections)
         {
@@ -147,7 +158,7 @@ internal class Server : IDisposable
         } catch (SocketException e)
         {
             stop(clientNet);
-            //TODO
+            Log<Server>.Instance.logger?.LogError("Error:" + e.Message);
         }
     }
 
@@ -161,7 +172,13 @@ internal class Server : IDisposable
 
     private void TakeInfo(List<byte> data, Network client)
     {
-        //TODO
+        try
+        {
+            string msg = $"Address: {IPAddress.Parse(((IPEndPoint)client.socket.RemoteEndPoint!).Address.ToString())} Error: {Encoding.UTF8.GetString(data.ToArray())}";
+            Log<Server>.Instance.logger?.LogError(msg);
+        } 
+        catch (SocketException){}
+        catch (ObjectDisposedException){}
     }
 
     ~Server()

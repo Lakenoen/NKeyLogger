@@ -78,4 +78,14 @@ public abstract class AbstractKeyInfo : IComparable<AbstractKeyInfo>
         return res;
     }
 
+    public override string ToString()
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var kvp in this.values)
+        {
+            sb.Append(kvp.Key).Append(" ").Append(kvp.Value).Append(" ");
+        }
+        return sb.ToString();
+    }
+
 }

@@ -37,13 +37,20 @@ public class AbstractSetting : IDisposable, IComparable<AbstractSetting>
         this.path = path;
         file = new FileStream(
             path,
-            FileMode.Open,
+            FileMode.OpenOrCreate,
             FileAccess.ReadWrite,
             FileShare.ReadWrite);
         mapping = MemoryMappedFile.CreateFromFile(file, null, file.Length, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None, false);
-        stream = mapping.CreateViewStream();
-        load();
 
+        if (mapping == null)
+            throw new ApplicationException("Settings not opened");
+
+        stream = mapping.CreateViewStream();
+
+        if (stream == null)
+            throw new ApplicationException("Settings not opened");
+
+        load();
         if (this.isCheckChangeFile)
         {
             fsw = new FileSystemWatcher(Directory.GetCurrentDirectory());

