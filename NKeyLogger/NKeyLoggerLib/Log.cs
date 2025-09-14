@@ -57,7 +57,7 @@ class FileLoggerProvider : ILoggerProvider
 
 public class Log<T>
 {
-    private const string logPath = "ServerLog.txt";
+    private const string logPath = "Log.txt";
     public ILogger<T>? logger { get; private set; } = null;
     private static Log<T>? instance = null;
     public static Log<T> Instance

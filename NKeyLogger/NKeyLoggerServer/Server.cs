@@ -60,7 +60,7 @@ internal class Server : IDisposable
         init();
         var newTask = start();
         updateTask?.Invoke(newTask);
-        Log<Server>.Instance.logger?.LogDebug("Reload server");
+        Log<Server>.Instance.logger?.LogInformation("Reload server");
     }
     private void init()
     {
@@ -81,9 +81,7 @@ internal class Server : IDisposable
             }).ToList().ForEach( (Network? n) =>
             {
                 if (n != null)
-                {
-                    connections.Remove(n, out _);
-                }
+                    this.stop(n);
             });
         checkClearConnectionTimer.Start();
         Log<Server>.Instance.logger?.LogDebug("Init server");
@@ -94,12 +92,13 @@ internal class Server : IDisposable
             return;
 
         isStart = true;
+        Log<Server>.Instance.logger?.LogInformation("Start server");
 
         while (isStart)
         {
             var socket = await network.socket.AcceptAsync(cancalableSource.Token);
-            Log<Server>.Instance.logger?.LogDebug($"Connect client: {IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint!).Address.ToString())}");
             Network clientNet = new Network(socket);
+            Log<Server>.Instance.logger?.LogInformation($"Connect client: {clientNet.getAddress()}");
             var connectionTask = Task.Factory.StartNew( async () => {
                 try
                 {
@@ -107,38 +106,34 @@ internal class Server : IDisposable
                     await read(clientNet);
                 } catch (SocketException e)
                 {
-                    Log<Server>.Instance.logger?.LogError($"Address: {IPAddress.Parse( ((IPEndPoint)clientNet.socket.RemoteEndPoint!).Address.ToString() )}" +
+                    Log<Server>.Instance.logger?.LogError($"Address: {clientNet.getAddress()} " +
                         $"Error: {e.Message}");
                 }
                 catch (Exception e)
                 {
-                    Log<Server>.Instance.logger?.LogError($"Address: {IPAddress.Parse(((IPEndPoint)clientNet.socket.RemoteEndPoint!).Address.ToString())}" +
+                    Log<Server>.Instance.logger?.LogError($"Address: {clientNet.getAddress()} " +
                         $"Error: {e.Message}");
                 }
             });
             connections[clientNet] = connectionTask;
         }
-        Log<Server>.Instance.logger?.LogDebug("Start server");
     }
 
     public void stop()
     {
-        Log<Server>.Instance.logger?.LogDebug("Stop server");
+        Log<Server>.Instance.logger?.LogInformation("Stop server");
         isStart = false;
         foreach (var item in connections)
-        {
-            item.Key.Dispose();
-        }
-        var taskList = connections.Values;
-        Task.WaitAll(taskList);
-        connections.Clear();
+            stop(item.Key);
         cancalableSource.Cancel();
     }
 
     private void stop(Network socketSuppler)
     {
-        connections.Remove(socketSuppler, out _);
+        disconnectClient?.Invoke(socketSuppler);
         socketSuppler.Dispose();
+        connections[socketSuppler].Wait();
+        connections.Remove(socketSuppler, out _);
     }
     private async Task read(Network clientNet)
     {
@@ -174,7 +169,7 @@ internal class Server : IDisposable
     {
         try
         {
-            string msg = $"Address: {IPAddress.Parse(((IPEndPoint)client.socket.RemoteEndPoint!).Address.ToString())} Error: {Encoding.UTF8.GetString(data.ToArray())}";
+            string msg = $"Address: {client.getAddress()} Error: {Encoding.UTF8.GetString(data.ToArray())}";
             Log<Server>.Instance.logger?.LogError(msg);
         } 
         catch (SocketException){}
@@ -200,4 +195,7 @@ internal class Server : IDisposable
 
     public event KeyHandler? keyHandler;
     public delegate void KeyHandler(Server sender, Network clientNet, AbstractKeyInfo keyInfo);
+
+    public event DisconnectClient? disconnectClient;
+    public delegate void DisconnectClient(Network client);
 }

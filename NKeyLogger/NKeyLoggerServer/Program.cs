@@ -14,12 +14,12 @@ class Program
         {
             AbstractSetting setting = new ConstSetting(settingPath, true);
             Server server = new Server(setting);
-            var startTask = server.start();
+            StorageManager manager = new StorageManager(setting);
 
-            server.keyHandler += (Server serv, Network user, AbstractKeyInfo key) =>
-            {
-                Log<Program>.Instance.logger?.LogDebug(key.getValues().First() + " " + key.getValues().ElementAt(3));
-            };
+            server.disconnectClient += manager.removeClient;
+            server.keyHandler += manager.saveToFile;
+
+            var startTask = server.start();
 
             server.updateTask += (Task t) =>
             {

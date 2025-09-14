@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -68,6 +69,16 @@ public class Network : IDisposable
         int size = BitConverter.ToInt32( byteSize.ToArray() );
         List<byte> data = await readAsync(size);
         return (data, type);
+    }
+
+    public string getAddress()
+    {
+        return ((IPEndPoint)socket.RemoteEndPoint!).Address.ToString();
+    }
+
+    public IPAddress getIPAddress()
+    {
+        return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint!).Address.ToString());
     }
     public void Dispose()
     {
