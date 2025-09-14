@@ -107,12 +107,12 @@ internal class Server : IDisposable
                 } catch (SocketException e)
                 {
                     Log<Server>.Instance.logger?.LogError($"Address: {clientNet.getAddress()} " +
-                        $"Error: {e.Message}");
+                        $"Error: {e.Message}\n {e.StackTrace}");
                 }
                 catch (Exception e)
                 {
                     Log<Server>.Instance.logger?.LogError($"Address: {clientNet.getAddress()} " +
-                        $"Error: {e.Message}");
+                        $"Error: {e.Message}\n {e.StackTrace}");
                 }
             });
             connections[clientNet] = connectionTask;
@@ -153,7 +153,7 @@ internal class Server : IDisposable
         } catch (SocketException e)
         {
             stop(clientNet);
-            Log<Server>.Instance.logger?.LogError("Error:" + e.Message);
+            Log<Server>.Instance.logger?.LogError("Error:" + e.Message + "\n" + e.StackTrace);
         }
     }
 

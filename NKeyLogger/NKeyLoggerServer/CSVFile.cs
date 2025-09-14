@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NKeyLoggerLib;
 
 namespace NKeyLoggerServer;
-internal class CSVFile
+internal class CSVFile : IDisposable
 {
-    public FileInfo fileInfo { get; init; }
+    public FileInfo fileInfo { get; private set; }
+    private FileStream fileStream { get; set; }
+    private StreamWriter fileWriter { get; set; }
+    private StreamReader fileReader { get; set; }
     private object locker = new();
     private long? maxFileLen = null;
     public long? MaxFileLen
     {
-        get => maxFileLen;
+        get {
+            lock (locker)
+            {
+                return maxFileLen;
+            }
+        }
         set
         {
             lock (locker)
@@ -27,20 +37,30 @@ internal class CSVFile
     private const short BLOCK_SIZE = 0x200;
     public CSVFile(string path)
     {
-        if(!File.Exists(path))
-            File.Create(path).Close();
+        init(path);
+    }
+
+    private void init(string path)
+    {
         this.fileInfo = new FileInfo(path);
+        fileStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+        fileWriter = new StreamWriter(fileStream);
+        fileReader = new StreamReader(fileStream);
     }
 
     public CSVFile(string path,long maxFileLen) : this(path)
     {
         this.maxFileLen = maxFileLen;
     }
+    ~CSVFile()
+    {
+        this.Dispose();
+    }
     public void append(AbstractKeyInfo key)
     {
         lock (locker)
         {
-            fileInfo.Refresh();
+           fileInfo.Refresh();
 
             if (fileInfo.Length == 0)
                 writeArray( key.getKeys().ToArray() );
@@ -58,51 +78,57 @@ internal class CSVFile
     {
         if (arr is null)
             return;
-        using var stream = fileInfo.AppendText();
-        lock (stream)
+
+        lock (locker) 
         {
             for (int i = 0; i < arr.Count() - 1; ++i)
             {
-                stream.Write($"{arr[i]};");
+                fileWriter.Write($"{arr[i]};");
             }
-            stream.Write($"{arr[arr.Length - 1]}\n");
+            fileWriter.Write($"{arr[arr.Length - 1]}\n");
+            fileWriter.Flush();
+            fileStream.Flush();
         }
     }
     private void resize()
     {
         string tempFilePath = fileInfo.FullName + "_copy";
-        using (FileStream file = fileInfo.OpenRead())
+
         {
             using FileStream tempFile = File.Create(tempFilePath);
             using StreamWriter writer = new StreamWriter(tempFile);
-            using StreamReader reader = new StreamReader(file);
 
             //Copy header to temp file
-            writer.WriteLine(reader.ReadLine());
+            writer.WriteLine(fileReader.ReadLine());
             writer.Flush();
 
             //Calc new size and move to end line
             long newSize = this.fileInfo.Length / 2;
-            file.Seek(newSize, SeekOrigin.Begin);
-            byte[] buff = new byte [2];
-            while (file.ReadByte() != 0xA) { }
+            fileStream.Seek(newSize, SeekOrigin.Begin);
+            byte[] buff = new byte[2];
+            while (fileStream.ReadByte() != 0xA) { }
 
             //Copy to temp file
             byte[] buffer = new byte[BLOCK_SIZE];
             int readed = 0;
-            while ( (readed = file.Read(buffer, 0, buffer.Length)) > 0)
+            while ((readed = fileStream.Read(buffer, 0, buffer.Length)) > 0)
             {
                 var p = tempFile.Position;
                 tempFile.Write(buffer, 0, readed);
             }
             tempFile.Flush();
         }
+
         delete();
         File.Copy(tempFilePath, fileInfo.FullName, true);
+        init(fileInfo.FullName);
         delete(tempFilePath);
     }
 
     public void delete() {
+        fileWriter.Flush();
+        fileStream.Flush();
+        this.Dispose();
         this.delete(fileInfo.FullName);
     }
 
@@ -113,4 +139,13 @@ internal class CSVFile
             File.Delete(path);
         }
     }
+    public void Dispose() {
+        lock (locker)
+        {
+           fileWriter.Close();
+           fileReader.Close();
+           fileStream.Close();
+        }
+    }
+
 }
