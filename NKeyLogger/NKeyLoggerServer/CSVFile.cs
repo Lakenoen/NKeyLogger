@@ -44,6 +44,7 @@ internal class CSVFile : IDisposable
     {
         this.fileInfo = new FileInfo(path);
         fileStream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+        fileStream.Seek(fileStream.Length, SeekOrigin.Begin);
         fileWriter = new StreamWriter(fileStream);
         fileReader = new StreamReader(fileStream);
     }
