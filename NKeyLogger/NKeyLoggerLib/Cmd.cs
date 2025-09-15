@@ -28,6 +28,10 @@ public class Cmd : IDisposable
         init();
     }
 
+    ~Cmd()
+    {
+        this.Dispose();
+    }
     private void init()
     {
         ProcessStartInfo psi = new ProcessStartInfo("cmd.exe");
@@ -85,6 +89,7 @@ public class Cmd : IDisposable
         reader?.Close();
         cmdProcess.CloseMainWindow();
         cmdProcess.Close();
+        tokenSource.Dispose();
     }
 
 }

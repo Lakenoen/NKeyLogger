@@ -74,6 +74,9 @@ internal class KeyListener : IDisposable
     }
     private void takeKey(AbstractKeyInfo info)
     {
+        KeyInfo? keyInfo = info as KeyInfo;
+        if( keyInfo?.Key == "caps lock")
+            keyInfo.Key = "CAPS LOCK";
         keysQueue.Enqueue(info);
     }
 
