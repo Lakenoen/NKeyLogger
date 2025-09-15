@@ -37,7 +37,10 @@ public class Network : IDisposable
     {
         disconnectCheckTimer.Stop();
         if (!isConnected())
+        {
             disconnected?.Invoke(this);
+            disconnectCheckTimer.Stop();
+        }
         disconnectCheckTimer.Start();
     }
 
@@ -55,8 +58,7 @@ public class Network : IDisposable
                     return false;
             }
             return true;
-        }
-        catch (SocketException)
+        } catch (SocketException)
         {
             return false;
         }
