@@ -121,6 +121,8 @@ internal class Server : IDisposable
 
     public void stop()
     {
+        if (!this.isStart)
+            return;
         Log<Server>.Instance.logger?.LogInformation("Stop server");
         isStart = false;
         foreach (var item in connections)

