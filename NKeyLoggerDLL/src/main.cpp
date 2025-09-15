@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <Windows.h>
 #include <psapi.h>
+#ifdef DEBUG
+#include <thread>
+#endif
 
 //Constants and DataTypes
 struct KeyResult {
@@ -158,7 +161,8 @@ extern "C" {
 		isStopped.store(false);
 		isListen.store(true);
 		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0) && isListen.load()) {
+		while (isListen.load()) {
+			PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE);
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -190,7 +194,6 @@ KeyResult toKeyResult(NativeKeyResult nativeKey) {
 
 void testCallBack(NativeKeyResult nativeRes, const bool isUpper) {
 	KeyResult res = toKeyResult(nativeRes);
-	static short upperShift = 0x20;
 	if (isUpper)
 		for (int i = 0; i < res.key.size(); ++i)
 			res.key[i] = towupper(res.key[i]);
@@ -200,7 +203,11 @@ void testCallBack(NativeKeyResult nativeRes, const bool isUpper) {
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	bool work = true;
-	start(testCallBack);
+	std::thread th (start,testCallBack);
+	th.detach();
+	Sleep(5000);
+	stop();
+	waitForStopped();
 	return 0;
 }
 #endif

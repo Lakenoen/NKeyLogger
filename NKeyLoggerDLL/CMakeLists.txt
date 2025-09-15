@@ -7,6 +7,11 @@ set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( SOURCE src/main.cpp )
 set ( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 
+if(MSVC)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI /Gy")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /ZI /Gy")
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_compile_definitions(DEBUG)
 	add_executable(${PROJECT_NAME} ${SOURCE})
