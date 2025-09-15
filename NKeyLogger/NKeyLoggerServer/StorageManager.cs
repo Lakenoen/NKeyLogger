@@ -45,7 +45,11 @@ internal class StorageManager
 
     public void removeClient(Network client)
     {
-        CSVFiles[client].Dispose();
+        CSVFile? val = null;
+        if (CSVFiles.TryGetValue(client, out val))
+        {
+            CSVFiles[client].Dispose();
+        }
         CSVFiles.Remove(client,out _);
     }
 

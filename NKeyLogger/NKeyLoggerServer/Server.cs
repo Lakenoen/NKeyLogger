@@ -21,7 +21,6 @@ internal class Server : IDisposable
     private RSACryptoServiceProvider rsa;
     private bool isStart = false;
     private ConcurrentDictionary<Network, Task> connections = new ConcurrentDictionary<Network, Task>();
-    private System.Timers.Timer checkClearConnectionTimer { get; set; }
     private AbstractSetting setting { get; set; }
     private CancellationTokenSource cancalableSource { get; set; }
     public Server(AbstractSetting setting)
@@ -41,9 +40,8 @@ internal class Server : IDisposable
         int cryptoKeySize = int.Parse(setting.Properties["cryptokeysize"]);
         if (cryptoKeySize <= 0x400)
             throw new ApplicationException("Error parse settings: crypto key size should be more 1024");
-        int clearConnectionelipse = int.Parse(setting.Properties["clearconnectionelipse"]);
         Log<Server>.Instance.logger?.LogDebug($"Load settings into server:\n size of cryptokey - {cryptoKeySize}\n" +
-                $"port - {port}\n clear connection delay - {clearConnectionelipse}\n");
+                $"port - {port}\n");
     }
 
     private void changeFileSetting(AbstractSetting setting)
@@ -67,23 +65,10 @@ internal class Server : IDisposable
         this.network = new Network();
         ipPoint = new IPEndPoint(IPAddress.Any, int.Parse(this.setting.Properties["port"]));
         rsa = new RSACryptoServiceProvider(int.Parse(this.setting.Properties["cryptokeysize"]));
-        checkClearConnectionTimer = new System.Timers.Timer(int.Parse(this.setting.Properties["clearconnectionelipse"]));
         cancalableSource = new CancellationTokenSource();
 
         network.socket.Bind(ipPoint);
         network.socket.Listen();
-        checkClearConnectionTimer.Elapsed += (sender, e) =>
-            connections.Select( (KeyValuePair<Network,Task> el) =>
-            {
-                if (!el.Key.socket.Connected)
-                    return el.Key;
-                return null;
-            }).ToList().ForEach( (Network? n) =>
-            {
-                if (n != null)
-                    this.stop(n);
-            });
-        checkClearConnectionTimer.Start();
         Log<Server>.Instance.logger?.LogDebug("Init server");
     }
     public async Task start()
@@ -98,6 +83,11 @@ internal class Server : IDisposable
         {
             var socket = await network.socket.AcceptAsync(cancalableSource.Token);
             Network clientNet = new Network(socket);
+            if (connections.ContainsKey(clientNet))
+            {
+                clientNet.Dispose();
+                continue;
+            }
             Log<Server>.Instance.logger?.LogInformation($"Connect client: {clientNet.getAddress()}");
             var connectionTask = Task.Factory.StartNew( async () => {
                 try
@@ -115,6 +105,10 @@ internal class Server : IDisposable
                         $"Error: {e.Message}\n {e.StackTrace}");
                 }
             });
+            clientNet.disconnected += (Network sender) =>
+            {
+                stop(clientNet);
+            };
             connections[clientNet] = connectionTask;
         }
     }
@@ -133,9 +127,13 @@ internal class Server : IDisposable
     private void stop(Network socketSuppler)
     {
         disconnectClient?.Invoke(socketSuppler);
+        Log<Server>.Instance.logger?.LogInformation(socketSuppler.getAddress() + " disconnected");
         socketSuppler.Dispose();
-        connections[socketSuppler].Wait();
-        connections.Remove(socketSuppler, out _);
+        if(connections.TryGetValue(socketSuppler, out Task? connection))
+        {
+            connection.Wait();
+            connections.Remove(socketSuppler, out _);
+        }
     }
     private async Task read(Network clientNet)
     {
@@ -154,8 +152,11 @@ internal class Server : IDisposable
             }
         } catch (SocketException e)
         {
-            stop(clientNet);
-            Log<Server>.Instance.logger?.LogError("Error:" + e.Message + "\n" + e.StackTrace);
+            if (clientNet.isConnected())
+            {
+                stop(clientNet);
+                Log<Server>.Instance.logger?.LogError("Error:" + e.Message + "\n" + e.StackTrace);
+            }
         }
     }
 
@@ -188,7 +189,6 @@ internal class Server : IDisposable
         stop();
         network.Dispose();
         rsa.Dispose();
-        this.checkClearConnectionTimer.Dispose();
         this.cancalableSource.Dispose();
     }
 

@@ -17,6 +17,7 @@ internal class NetworkClient : ISender, IDisposable
     public AbstractSetting settings { get; }
     private readonly RSACryptoServiceProvider rsa;
     private readonly System.Timers.Timer reconnectTimer;
+    private object connectedLocker = new object();
     public NetworkClient(AbstractSetting settings)
     {
         this.settings = settings;
@@ -66,46 +67,56 @@ internal class NetworkClient : ISender, IDisposable
     }
     private void reconnect(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        Log<NetworkClient>.Instance.logger?.LogDebug($"Reconnect network client {e.SignalTime.ToString("D")}");
-        if(!client.socket.Connected)
+        Log<NetworkClient>.Instance.logger?.LogDebug($"Try reconnect network client {e.SignalTime.ToString("D")}");
+        if (!client.isConnected())
+        {
+            reconnectTimer.Stop();
             connect();
+            reconnectTimer.Start();
+        }
     }
     public void connect()
     {
-        var reconn = () =>
+        lock (connectedLocker)
         {
-            Log<NetworkClient>.Instance.logger?.LogDebug($"Network client trying reconnect to {settings.Properties["address"]}");
-            disconnect();
-            client = new Network();
-        };
+            var reconn = () =>
+            {
+                Log<NetworkClient>.Instance.logger?.LogDebug($"Network client trying reconnect to {settings.Properties["address"]}");
+                disconnect();
+                client = new Network();
+            };
 
-        if (!client.socket.Connected)
-            client = new Network();
-        else {
-            reconn();
+            if (!client.isConnected())
+                client = new Network();
+            else
+            {
+                reconn();
+            }
+
+            do
+            {
+                try
+                {
+                    client.socket.Connect(settings.Properties["address"], int.Parse(settings.Properties["port"]));
+                    Log<NetworkClient>.Instance.logger?.LogDebug($"Network client connected to {settings.Properties["address"]}");
+                    List<byte> dataOpenKey = client.recvAsync().Result.data;
+                    rsa.ImportRSAPublicKey(dataOpenKey?.ToArray(), out _);
+                }
+                catch (SocketException)
+                {
+                    reconn();
+                }
+                catch (Exception)
+                {
+                    reconn();
+                }
+            } while (!client.isConnected());
         }
-
-        do
-        {
-            try
-            {
-                client.socket.Connect( settings.Properties["address"], int.Parse(settings.Properties["port"]) );
-                Log<NetworkClient>.Instance.logger?.LogDebug($"Network client connected to {settings.Properties["address"]}");
-                List<byte> dataOpenKey = client.recvAsync().Result.data;
-                rsa.ImportRSAPublicKey(dataOpenKey?.ToArray(), out _);
-            }
-            catch (SocketException){
-                reconn();
-            } catch(Exception)
-            {
-                reconn();
-            }
-        } while (!client.socket.Connected);
     }
 
     public void disconnect()
     {
-        if ( !client.socket.Connected )
+        if ( !client.isConnected() )
             return;
         Log<NetworkClient>.Instance.logger?.LogDebug($"disconnect network client {DateTime.Now.ToString("D")}");
         client.Dispose();
@@ -115,7 +126,7 @@ internal class NetworkClient : ISender, IDisposable
     {
         try
         {
-            if ( !client.socket.Connected )
+            if ( !client.isConnected())
                 return;
 
             byte[] encData = rsa.Encrypt(keyInfo.GetBytes(), false);
@@ -123,7 +134,7 @@ internal class NetworkClient : ISender, IDisposable
         }
         catch (Exception ex)
         {
-            if(client.socket.Connected)
+            if(client.isConnected())
                 client?.sendAsync(Encoding.UTF8.GetBytes(ex.Message), Network.Type.INFO);
         }
     }

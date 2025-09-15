@@ -28,6 +28,7 @@ class Program
             {
                 KeyListener.Instance.stopListenAsync().Wait();
                 NetworkClient? client = KeyListener.Instance.sender as NetworkClient;
+                client?.disconnect();
                 if (client != null)
                     client.Dispose();
                 setting.Dispose();
