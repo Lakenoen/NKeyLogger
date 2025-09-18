@@ -33,6 +33,7 @@ internal class KeyListener : IDisposable
         "num 8",
         "num 9",
         "num *",
+        "num del",
         "f1",
         "f2",
         "f3",

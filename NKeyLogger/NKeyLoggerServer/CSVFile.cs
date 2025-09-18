@@ -100,8 +100,11 @@ internal class CSVFile : IDisposable
             using StreamWriter writer = new StreamWriter(tempFile);
 
             //Copy header to temp file
+            long currentPos = fileStream.Position;
+            fileStream.Seek(0, SeekOrigin.Begin);
             writer.WriteLine(fileReader.ReadLine());
             writer.Flush();
+            fileStream.Seek(currentPos, SeekOrigin.Begin);
 
             //Calc new size and move to end line
             long newSize = this.fileInfo.Length / 2;

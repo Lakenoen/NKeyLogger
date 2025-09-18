@@ -42,9 +42,27 @@ public class KeyInfo(string key, string lang, string proc, string timestamp) : A
         }
     }
 
+    public string Timestamp
+    {
+        get => values["timestamp"];
+        set
+        {
+            values["timestamp"] = value;
+            base.OnUpdate("timestamp", value);
+        }
+    }
+
     public KeyInfo() : this("", "", "", "") { }
     public KeyInfo(string key) : this(key, "", "", "") { }
     public KeyInfo(string key, string lang) : this(key, lang, "", "") { }
+
+    public static Result<KeyInfo> fromCSVString(string line)
+    {
+        string[] values = line.Split(";");
+        if (values.Length != 4)
+            return Result<KeyInfo>.Failure("Parse error");
+        return Result<KeyInfo>.Success(new KeyInfo(values[0], values[1], values[2], values[3]));
+    }
 
 }
 
