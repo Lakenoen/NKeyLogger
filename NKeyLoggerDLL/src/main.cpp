@@ -89,6 +89,7 @@ std::wstring getSpecialKey(const std::wstring& key) {
 		std::pair<std::wstring,std::wstring>(L"\r",L"Enter"),
 		std::pair<std::wstring,std::wstring>(L"\t",L"Tab"),
 		std::pair<std::wstring,std::wstring>(L"\x1b",L"Esc"),
+		std::pair<std::wstring,std::wstring>(L" ",L"Space"),
 	};
 	auto it = map.find(key);
 	if (it == map.end())

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
-using Aspose.Html;
 using NKeyLoggerLib;
 
 namespace ReportMaker;
@@ -92,7 +91,7 @@ internal class ReportGenerator
 
         bool isSep = separators.Any(elem =>
         {
-            return elem == info.Key;
+            return elem.ToLower() == info.Key.ToLower();
         });
 
         KeyInfo? lastKeyInfo = getContext(info).CurrentKey;
@@ -101,7 +100,7 @@ internal class ReportGenerator
         {
             if(lastKeyInfo == null)
                 return false;
-            return elem == lastKeyInfo.Key;
+            return elem.ToLower() == lastKeyInfo.Key.ToLower();
         });
 
         if (isLastSep && isSep)

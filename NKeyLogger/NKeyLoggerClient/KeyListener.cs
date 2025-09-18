@@ -22,6 +22,7 @@ internal class KeyListener : IDisposable
         "shift",
         "backspace",
         "enter",
+        "space",
         "pause",
         "num 0",
         "num 1",
