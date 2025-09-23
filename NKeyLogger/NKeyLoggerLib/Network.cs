@@ -40,6 +40,7 @@ public class Network : IDisposable
         {
             disconnected?.Invoke(this);
             disconnectCheckTimer.Stop();
+            return;
         }
         disconnectCheckTimer.Start();
     }
