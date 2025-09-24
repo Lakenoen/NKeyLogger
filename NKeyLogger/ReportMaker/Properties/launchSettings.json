@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReportMaker": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\\\code\\\\projects\\\\NKeyLogger\\\\NKeyLogger\\\\NKeyLoggerServer\\\\bin\\\\Debug\\\\net9.0\\\\storage\\\\127.0.0.1.csv\" \"./Report\""
+    }
+  }
+}

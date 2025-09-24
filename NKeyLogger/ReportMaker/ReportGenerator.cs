@@ -11,18 +11,19 @@ using NKeyLoggerLib;
 namespace ReportMaker;
 internal class ReportGenerator
 {
-    private const short DATE_THRESHOLD = 5;
+    private ulong dateThreshold = 5;
     private static string TEMP_PATH = AppDomain.CurrentDomain.BaseDirectory + "temp";
     private readonly Dictionary<string,Context> contextMap = new Dictionary<string,Context>();
     private DirectoryInfo? dirInfo;
-    private readonly Dictionary<string, ulong> dateMap = new Dictionary<string, ulong>();
+    private readonly Dictionary<DateTime, ulong> dateMap = new Dictionary<DateTime, ulong>();
+    private readonly List<ulong> times = new List<ulong>();
     private string sourcePath { get; init; }
     public ReportGenerator(string source)
     {
         this.sourcePath = source;
     }
 
-    public void generateRawReport(string targetPath)
+    public void generateReport(string targetPath)
     {
 
         if (File.Exists(targetPath))
@@ -34,7 +35,11 @@ internal class ReportGenerator
         dirInfo = Directory.CreateDirectory(TEMP_PATH);
         using CSVReader reader = new CSVReader(this.sourcePath);
 
-        reader.read(appendToRawReport);
+        reader.read(takeTime);
+        dateThreshold = (ulong) getMedian(getIntevalTable(times));
+        dateThreshold = (dateThreshold == 0) ? 1 : dateThreshold;
+
+        reader.read(append);
         foreach (var pair in contextMap)
         {
             if (!File.Exists(pair.Value.TempFilePath))
@@ -45,6 +50,14 @@ internal class ReportGenerator
             File.AppendAllText(targetPath, "\r\n");
         }
 
+        KeyValuePair<DateTime, ulong> maxPair = new KeyValuePair<DateTime,ulong>();
+        foreach (var pair in dateMap)
+        {
+            if (pair.Value > maxPair.Value)
+                maxPair = pair;
+        }
+        File.AppendAllText(targetPath, $"Date and time of maximum activity: {maxPair.Key}");
+        
         this.clear();
     }
 
@@ -52,6 +65,7 @@ internal class ReportGenerator
     {
         contextMap.Clear();
         dateMap.Clear();
+        times.Clear();
         dirInfo?.Delete();
     }
 
@@ -69,7 +83,90 @@ internal class ReportGenerator
             }
         }
     }
-    private void appendToRawReport(KeyInfo? info)
+
+    DateTime lastDateTime = DateTime.MinValue;
+    private void takeTime(KeyInfo? info)
+    {
+        if (info == null)
+            return;
+
+        DateTime currentTapKeyTime = DateTime.Parse(info.Timestamp);
+
+        if (lastDateTime == DateTime.MinValue)
+        {
+            lastDateTime = DateTime.Parse(info.Timestamp);
+            return;
+        }
+
+        ulong diff = Convert.ToUInt64((currentTapKeyTime - lastDateTime).TotalMinutes);
+        lastDateTime = currentTapKeyTime;
+
+        times.Add(diff);
+    }
+
+    private Dictionary<Interval, int> getIntevalTable(List<ulong> list)
+    {
+        var res = new Dictionary<Interval, int>();
+        ulong sum = 0;
+        foreach (ulong el in list)
+            sum += el;
+        ulong min = list.Min();
+        ulong max = list.Max();
+        ulong diff = max - min;
+        ulong h = diff / (ulong)(1.0 + 3.3221 * Math.Log10(sum));
+
+        List<Interval> ranges = new List<Interval>();
+
+        for( ulong i = min; i < max; i += h)
+            ranges.Add(new Interval( i, i + h ));
+
+        foreach (Interval el in ranges)
+        {
+            res[el] = list.FindAll(i =>
+            {
+                if(i >= (ulong)el.Start && i < (ulong)el.End)
+                    return true;
+                return false;
+            }).Count;
+        }
+
+        return res;
+    }
+
+    private int getMedian(Dictionary<Interval, int> data)
+    {
+        if (data.Count == 0)
+            throw new ArgumentException("Frequency table is empty");
+
+        var values = data.Values.ToList();
+        values.Sort();
+        var sum = values.Sum();
+        int acc = 0;
+        int index = 0;
+        while( acc < sum / 2)
+        {
+            if(acc == 0)
+                acc = values[index++];
+            else
+                acc += values[index++];
+        }
+
+        --index;
+
+        Interval? midInt = null;
+
+        foreach (var item in data)
+        {
+            if (item.Value == values[index])
+                midInt = item.Key;
+        }
+
+        if (midInt is null)
+            throw new ArgumentException("Median interva lwas be null");
+
+        return ( (sum / 2) - values[index-1] ) * (int)midInt.Value.Start / values[index];
+    }
+    private void append(KeyInfo? info)
     {
         if (info == null)
             return;
@@ -80,7 +177,7 @@ internal class ReportGenerator
         if (isDateDiffMoreThreshold(info.Timestamp, ctx.CurrentKey?.Timestamp) || ctx.isFirstToken) { 
             File.AppendAllText(ctx.TempFilePath, newLine + info.Timestamp + ": ");
             ctx.isFirstToken = false;
-            dateMap[info.Timestamp] = 0;
+            dateMap[DateTime.Parse(info.Timestamp)] = 0;
             ctx.lastTimestamp = info.Timestamp;
         }
 
@@ -89,7 +186,7 @@ internal class ReportGenerator
         else
             File.AppendAllText(ctx.TempFilePath, info.Key);
 
-        ++dateMap[ctx.lastTimestamp];
+        ++dateMap[DateTime.Parse(ctx.lastTimestamp)];
 
         ctx.CurrentKey = info;
     }
@@ -100,7 +197,7 @@ internal class ReportGenerator
             return true;
         DateTime t1 = DateTime.Parse(timestampFirst);
         DateTime t2 = DateTime.Parse(timestampSecond);
-        return DATE_THRESHOLD < (t1 - t2).TotalMinutes;
+        return dateThreshold < (t1 - t2).TotalMinutes;
     }
 
     private Context getContext(KeyInfo info)
@@ -131,4 +228,21 @@ internal class ReportGenerator
         }
 
     }
+
+    private struct Interval(ulong start, ulong end)
+    {
+        public ulong Start { get; set; } = start;
+        public ulong End { get; set; } = end;
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Start.GetHashCode(), End.GetHashCode());
+        }
+
+        public ulong getMid()
+        {
+            return (Start + End) / 2;
+        }
+    }
+
 }
