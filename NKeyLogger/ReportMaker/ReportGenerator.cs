@@ -11,11 +11,11 @@ using NKeyLoggerLib;
 namespace ReportMaker;
 internal class ReportGenerator
 {
-    private ulong dateThreshold = 5;
+    private ulong dateThresholdMinute = 5;
     private static string TEMP_PATH = AppDomain.CurrentDomain.BaseDirectory + "temp";
     private readonly Dictionary<string,Context> contextMap = new Dictionary<string,Context>();
-    private DirectoryInfo? dirInfo;
     private readonly Dictionary<DateTime, ulong> dateMap = new Dictionary<DateTime, ulong>();
+    private readonly Dictionary<string, int> langMap = new Dictionary<string, int>();
     private readonly List<ulong> times = new List<ulong>();
     private string sourcePath { get; init; }
     public ReportGenerator(string source)
@@ -32,19 +32,23 @@ internal class ReportGenerator
         foreach (var item in contextMap.Values)
             item.isFirstToken = true;
 
-        dirInfo = Directory.CreateDirectory(TEMP_PATH);
+        Directory.CreateDirectory(TEMP_PATH);
+        File.AppendAllText(targetPath, "<Report>\r\n");
+        File.AppendAllText(targetPath, $"Source: \"{sourcePath}\"\r\n\r\n");
+
+
         using CSVReader reader = new CSVReader(this.sourcePath);
 
         reader.read(takeTime);
-        dateThreshold = (ulong) getMedian(getIntevalTable(times));
-        dateThreshold = (dateThreshold == 0) ? 1 : dateThreshold;
+        dateThresholdMinute = (ulong) getMedian(getIntevalTable(times));
+        dateThresholdMinute = (dateThresholdMinute == 0) ? 1 : dateThresholdMinute;
 
         reader.read(append);
         foreach (var pair in contextMap)
         {
             if (!File.Exists(pair.Value.TempFilePath))
                 continue;
-            File.AppendAllText(targetPath, pair.Key + ":\r\n");
+            File.AppendAllText(targetPath, "Application: \"" + pair.Key + "\"\r\n");
             joinFile(targetPath, pair.Value.TempFilePath);
             File.Delete(pair.Value.TempFilePath);
             File.AppendAllText(targetPath, "\r\n");
@@ -56,8 +60,15 @@ internal class ReportGenerator
             if (pair.Value > maxPair.Value)
                 maxPair = pair;
         }
-        File.AppendAllText(targetPath, $"Date and time of maximum activity: {maxPair.Key}");
+        File.AppendAllText(targetPath, "Additional information:\r\n");
+        File.AppendAllText(targetPath, $"The peak of activity: {maxPair.Key} - {maxPair.Key.AddMinutes(dateThresholdMinute)}\r\n");
         
+        int allSumbolsCount = langMap.Sum(x => x.Value);
+        foreach ( var p in langMap)
+        {
+            double percent = Math.Round ( (double) p.Value / (double) allSumbolsCount * 100.0 );
+            File.AppendAllText(targetPath, $"{p.Key}: {percent}%\r\n");
+        }
         this.clear();
     }
 
@@ -66,9 +77,8 @@ internal class ReportGenerator
         contextMap.Clear();
         dateMap.Clear();
         times.Clear();
-        dirInfo?.Delete();
+        langMap.Clear();
     }
-
     private void joinFile(string mainFilePath, string childFilePath)
     {
         using (FileStream fileStream = File.Open(mainFilePath,FileMode.OpenOrCreate))
@@ -186,6 +196,7 @@ internal class ReportGenerator
         else
             File.AppendAllText(ctx.TempFilePath, info.Key);
 
+        langMap[info.Language] = (langMap.ContainsKey(info.Language)) ? langMap[info.Language] + 1 : 1;
         ++dateMap[DateTime.Parse(ctx.lastTimestamp)];
 
         ctx.CurrentKey = info;
@@ -197,7 +208,7 @@ internal class ReportGenerator
             return true;
         DateTime t1 = DateTime.Parse(timestampFirst);
         DateTime t2 = DateTime.Parse(timestampSecond);
-        return dateThreshold < (t1 - t2).TotalMinutes;
+        return dateThresholdMinute < (t1 - t2).TotalMinutes;
     }
 
     private Context getContext(KeyInfo info)
