@@ -9,25 +9,13 @@ using NKeyLoggerLib;
 namespace NKeyLoggerClient;
 internal class NativeKeyListener : IDisposable
 {
-#if X86
-    [DllImport("NKeyLoggerDLL_x86", CallingConvention = CallingConvention.StdCall)]
-#else
     [DllImport("NKeyLoggerDLL", CallingConvention = CallingConvention.StdCall)]
-#endif
     private static extern bool start(CallBackDelegate callBack);
 
-#if X86
-    [DllImport("NKeyLoggerDLL_x86", CallingConvention = CallingConvention.StdCall)]
-#else
     [DllImport("NKeyLoggerDLL", CallingConvention = CallingConvention.StdCall)]
-#endif
     private static extern bool stop();
 
-#if X86
-    [DllImport("NKeyLoggerDLL_x86", CallingConvention = CallingConvention.StdCall)]
-#else
     [DllImport("NKeyLoggerDLL", CallingConvention = CallingConvention.StdCall)]
-#endif
     private static extern void waitForStopped();
 
     private static bool isObjectExist = false;
