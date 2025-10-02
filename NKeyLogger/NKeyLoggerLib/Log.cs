@@ -31,8 +31,14 @@ class FileLogger : ILogger
     {
         lock (sync)
         {
-            if (IsEnabled(logLevel))
-                File.AppendAllText(this.path, formatter.Invoke(state, exception) + "\n");
+            try
+            {
+                if (IsEnabled(logLevel))
+                    File.AppendAllText(this.path, DateTime.Now.ToString("G") + ": " + formatter.Invoke(state, exception) + "\n");
+            } catch (Exception)
+            {
+
+            }
         }
     }
 }

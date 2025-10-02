@@ -21,6 +21,10 @@ internal class CSVReader : IDisposable
         options.Mode = FileMode.Open;
         options.Access = FileAccess.Read;
         newPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + System.IO.Path.GetFileName(path) + ".copy";
+
+        if (File.Exists(newPath))
+            File.Delete(newPath);
+
         copyFile(path, newPath);
         stream = new FileStream(newPath, options);
         this.reader = new StreamReader(stream);
@@ -67,6 +71,7 @@ internal class CSVReader : IDisposable
     {
         stream.Seek(0, SeekOrigin.Begin);
         string? header = reader.ReadLine();
+
         if (!checkFormat(header))
             throw new ApplicationException("Error parse file");
 
