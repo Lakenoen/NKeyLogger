@@ -7,29 +7,11 @@
 #include <algorithm>
 #include <Windows.h>
 #include <psapi.h>
+#include <vector>
 #ifdef DEBUG
 #include <thread>
 #endif
-
-//Constants and DataTypes
-struct KeyResult {
-	std::wstring key = L"";
-	std::wstring langName = L"";
-	std::wstring procName = L"";
-	std::string error = "";
-};
-
-static const short langNameSize = 0x100;
-static const short procNameSize = 0x400;
-static const short keySize = 0x10;
-static const short maxErrorSize = 0x400;
-
-struct NativeKeyResult {
-	wchar_t key[keySize] = L"";
-	wchar_t langName[langNameSize] = L"";
-	wchar_t procName[procNameSize] = L"";
-	char error[maxErrorSize] = "";
-};
+#include "KeyResult.h"
 
 using CallbackFunction = void (*)(NativeKeyResult result, const bool isUpper);
 
@@ -37,6 +19,12 @@ static std::atomic<bool> isStopped;
 static std::atomic<bool> isListen;
 static HHOOK hookKeyboard;
 static CallbackFunction callback = nullptr;
+
+static std::vector<std::wstring> windowClassNames = {
+	L"ConsoleWindowClass",
+	L"WindowsTerminal",
+	L"ApplicationFrameWindow",
+};
 
 //Function defines
 NativeKeyResult toNative(const KeyResult&);
@@ -97,6 +85,19 @@ std::wstring getSpecialKey(const std::wstring& key) {
 	return it->second;
 }
 
+BOOL CALLBACK CallBackEnumWindow(HWND hwnd, LPARAM lp) {
+	static const char* findPattern = "IME";
+	char className[0xff];
+	int size = GetClassName(hwnd, className, 0xff);
+	if (size > 2 && strcmp(className, findPattern) == 0) {
+		if (*(HWND*)lp == GetAncestor(hwnd, GA_ROOTOWNER)) {
+			*(HWND*)lp = hwnd;
+			return false;
+		}
+	}
+	return true;
+}
+
 KeyResult getUnicodeKey(unsigned int code, unsigned int scanCode) {
 	KeyResult result;
 
@@ -105,7 +106,17 @@ KeyResult getUnicodeKey(unsigned int code, unsigned int scanCode) {
 	if (!GetKeyboardState(keyboardState->data()))
 		return KeyResult{};
 
-	HKL layout = GetKeyboardLayout(GetWindowThreadProcessId(GetForegroundWindow(), NULL));
+	HWND currentWindow = GetForegroundWindow();
+
+	wchar_t className[0xff];
+	if (GetClassNameW(currentWindow, className, 0xff) 
+		&& std::any_of(windowClassNames.begin(), windowClassNames.end(), [&className](std::wstring& el)->bool {return wcscmp(className, el.c_str()) == 0;}) )
+	{
+		EnumWindows(CallBackEnumWindow, (LPARAM) & currentWindow);
+	}
+
+	HKL layout = GetKeyboardLayout(GetWindowThreadProcessId(currentWindow, NULL));
+
 	result.langName = getLang(layout);
 	if (result.langName.empty())
 		result.langName = L"Unknown language";
@@ -206,7 +217,7 @@ int main() {
 	bool work = true;
 	std::thread th (start,testCallBack);
 	th.detach();
-	Sleep(5000);
+	Sleep(1000*60);
 	stop();
 	waitForStopped();
 	return 0;

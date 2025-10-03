@@ -148,7 +148,7 @@
               "RelativeDocumentMoniker": "ReportMaker\\ReportMaker.csproj",
               "ToolTip": "D:\\code\\projects\\NKeyLogger\\NKeyLogger\\ReportMaker\\ReportMaker.csproj",
               "RelativeToolTip": "ReportMaker\\ReportMaker.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2025-09-16T12:36:55.815Z",
               "EditorCaption": ""
@@ -189,8 +189,7 @@
               "RelativeToolTip": "NKeyLoggerClient\\NetworkClient.cs",
               "ViewState": "AgIAAEQAAAAAAAAAAADwv3wAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T11:39:09.773Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T11:39:09.773Z"
             },
             {
               "$type": "Document",
@@ -202,8 +201,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\AbstractSetting.cs",
               "ViewState": "AgIAABgAAAAAAAAAAAASwCoAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:34:50.002Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:34:50.002Z"
             },
             {
               "$type": "Document",
@@ -213,8 +211,7 @@
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAAAUVAAAAAAAAAAAwwBUVAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-09-15T01:20:03.356Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T01:20:03.356Z"
             },
             {
               "$type": "Document",
@@ -265,8 +262,7 @@
               "RelativeToolTip": "NKeyLoggerServer\\Program.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABIAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:13:48.014Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:13:48.014Z"
             },
             {
               "$type": "Document",
@@ -291,8 +287,7 @@
               "RelativeToolTip": "ReportMaker\\Program.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAowBoAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-15T21:29:56.055Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T21:29:56.055Z"
             },
             {
               "$type": "Document",
@@ -304,8 +299,7 @@
               "RelativeToolTip": "ReportMaker\\CSVReader.cs",
               "ViewState": "AgIAAC4AAAAAAAAAAAAcwEgAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-16T12:31:31.502Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-16T12:31:31.502Z"
             },
             {
               "$type": "Document",
@@ -315,8 +309,7 @@
               "ToolTip": "C:\\Users\\User\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\9.0.4\\build\\Microsoft.NETCore.Native.Publish.targets",
               "ViewState": "AgIAACEAAAAAAAAAAAAewDEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-10-02T18:41:35.72Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-02T18:41:35.72Z"
             },
             {
               "$type": "Document",
@@ -328,8 +321,7 @@
               "RelativeToolTip": "NKeyLoggerServer\\StorageManager.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAhwCMAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:44:09.056Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:44:09.056Z"
             },
             {
               "$type": "Document",
@@ -341,8 +333,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\Log.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAQwCcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:14:57.374Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:14:57.374Z"
             },
             {
               "$type": "Document",
@@ -380,8 +371,7 @@
               "RelativeToolTip": "NKeyLoggerServer\\ServiceWorker.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAkwCYAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T11:54:56.722Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T11:54:56.722Z"
             },
             {
               "$type": "Document",
@@ -393,8 +383,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\Network.cs",
               "ViewState": "AgIAADAAAAAAAAAAAAAMwC8AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T00:15:39.739Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T00:15:39.739Z"
             },
             {
               "$type": "Document",
@@ -406,8 +395,7 @@
               "RelativeToolTip": "NKeyLoggerClient\\KeyListener.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAQwBQAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T11:38:55.342Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T11:38:55.342Z"
             },
             {
               "$type": "Document",
@@ -417,8 +405,7 @@
               "ToolTip": "C:\\Users\\User\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.4\\build\\Microsoft.NET.ILLink.targets",
               "ViewState": "AgIAALwAAAAAAAAAAAAiwM4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-09-18T21:32:54.562Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-18T21:32:54.562Z"
             },
             {
               "$type": "Document",
@@ -430,8 +417,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\KeyInfo.cs",
               "ViewState": "AgIAABgAAAAAAAAAAAAowDIAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-15T14:56:44.176Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T14:56:44.176Z"
             },
             {
               "$type": "Document",
@@ -443,8 +429,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\Setting.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAcAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:34:46.023Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:34:46.023Z"
             },
             {
               "$type": "Document",
@@ -456,8 +441,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\Cmd.cs",
               "ViewState": "AgIAADoAAAAAAAAAAAASwFYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T23:59:46.669Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T23:59:46.669Z"
             },
             {
               "$type": "Document",
@@ -481,8 +465,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\Result.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAAgwBwAAABaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-15T00:08:57.291Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T00:08:57.291Z"
             },
             {
               "$type": "Document",
@@ -494,8 +477,7 @@
               "RelativeToolTip": "NKeyLoggerClient\\ISender.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T11:38:57.274Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T11:38:57.274Z"
             },
             {
               "$type": "Document",
@@ -507,8 +489,7 @@
               "RelativeToolTip": "NKeyLoggerLib\\AbstractKeyInfo.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAD0AAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-13T11:29:18.136Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-13T11:29:18.136Z"
             },
             {
               "$type": "Document",
