@@ -12,6 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\NKeyLoggerLib\NKeyLoggerLib.csproj" />
 	<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.0-rc.1.25451.107" />
+	<Content Include="setting.txt">
+	     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
   </ItemGroup>
 
 </Project>

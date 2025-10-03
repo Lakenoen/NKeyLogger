@@ -11,6 +11,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NKeyLoggerLib\NKeyLoggerLib.csproj" />
+	<Content Include="settings.txt">
+	     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	 <Content Include="NKeyLoggerDLL.dll">
+		 <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </Content>
   </ItemGroup>
 
 </Project>
